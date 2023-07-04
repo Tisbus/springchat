@@ -1,9 +1,11 @@
 package org.tisbus.controller;
 
+import org.hibernate.engine.spi.ManagedEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.tisbus.entity.UserEntity;
+import org.tisbus.entity.UserMessage;
 import org.tisbus.exception.UserAlreadyExistException;
 import org.tisbus.exception.UserNotFoundException;
 import org.tisbus.service.UserService;
@@ -26,6 +28,18 @@ public class UserController {
         catch (Exception e) {
             return ResponseEntity.badRequest().body("Ошибка - пользователь не сохранен");
         }
+    }
+    @PostMapping("/add")
+    public ResponseEntity addMessage(@RequestBody UserMessage message){
+        try{userService.addMessage(message);
+            return ResponseEntity.ok("Собщение добавлено!");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @GetMapping("/get_all")
+    public ResponseEntity getAllMessage(){
+        return ResponseEntity.ok(userService.getAllMessage());
     }
 
     @GetMapping("/id={id}")

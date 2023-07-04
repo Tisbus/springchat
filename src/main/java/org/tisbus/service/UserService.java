@@ -3,9 +3,12 @@ package org.tisbus.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tisbus.entity.UserEntity;
+import org.tisbus.entity.UserMessage;
 import org.tisbus.exception.UserAlreadyExistException;
 import org.tisbus.exception.UserNotFoundException;
+import org.tisbus.model.Message;
 import org.tisbus.model.User;
+import org.tisbus.repository.MessageRepo;
 import org.tisbus.repository.UserRepo;
 
 import java.util.ArrayList;
@@ -16,12 +19,23 @@ public class UserService {
 
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private MessageRepo messRepo;
 
     public UserEntity registration(UserEntity user) throws UserAlreadyExistException {
         if (userRepo.findByUsername(user.getUsername()) != null) {
             throw new UserAlreadyExistException("Ошибка - пользователь с таким именем уже существует!");
         }
         return userRepo.save(user);
+    }
+
+    public UserMessage addMessage(UserMessage message){
+       return messRepo.save(message);
+    }
+    public List<Message> getAllMessage(){
+        List<Message> messageList = new ArrayList<>();
+        messRepo.findAll().forEach(i -> messageList.add(Message.toMessage(i)));
+        return messageList;
     }
 
     public User getUserToId(Long id) throws UserNotFoundException {
